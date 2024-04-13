@@ -1,20 +1,42 @@
 const User = require("../models/User");
 const Forum = require("../models/Forum");
 
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+    region: 'ap-south-1'
+});
+  
 const forumController = {
-    createPost: async(req,res) =>{
+    createPost: async(req, res) => {
         const { title, desc, image } = req.body;
-        try{
+
+        try {
             const decoded = req.user;
             const user = await User.findOne({ email: decoded.email });
-            if(!user) {
-              return res.status(404).json({ message: "User not found" })
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
             }
-            const new_post = new Forum({ title, desc, image, author:user.name, authorId:user._id });
+
+            const imageBuffer = Buffer.from(image, 'base64');
+
+            const imageKey = `forum_images/${Date.now().toString()}_image.jpg`;
+            const params = {
+                Bucket: 'slightestscam',
+                Key: imageKey,
+                Body: imageBuffer,
+                ACL: 'public-read',
+                ContentType: 'image/jpeg'
+            };
+            const s3Response = await s3.upload(params).promise();
+
+            const new_post = new Forum({ title, desc, image: s3Response.Location, author: user.name, authorId: user._id });
             await new_post.save();
+
             res.status(201).json({ message: "Post created successfully", post: new_post });
-        }catch(error){
-            res.status(400).json({message:"error"});
+        } catch (error) {
+            console.error(error);
+            res.status(400).json({ message: "Error creating post" });
         }
     },
 
@@ -110,7 +132,7 @@ const forumController = {
             if (!Post) {
                 return res.status(404).json({ message: "Post not found" });
             }
-            res.status(200).json({ post: Post });
+            res.status(200).json({ Post });
         }catch(error){
             res.status(400).json({ message: error.message || "Something went wrong" });
         }
