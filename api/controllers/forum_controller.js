@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Forum = require("../models/Forum");
+const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
