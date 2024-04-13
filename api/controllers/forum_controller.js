@@ -3,44 +3,45 @@ const Forum = require("../models/Forum");
 const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-    region: 'ap-south-1'
+    accessKeyId: "AKIAXQH2USIP5EIVBPEM",
+    secretAccessKey: "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",
+    region: "ap-south-1"
 });
   
 const forumController = {
-    createPost: async(req, res) => {
+    createPost: async (req, res) => {
         const { title, desc, image } = req.body;
-
+    
         try {
             const decoded = req.user;
             const user = await User.findOne({ email: decoded.email });
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
             }
-
             const imageBuffer = Buffer.from(image, 'base64');
-
-            const imageKey = `forum_images/${Date.now().toString()}_image.jpg`;
+    
+            const fileExtension = image.startsWith('data:image/jpeg') ? 'jpg' : 'png';
+            const contentType = fileExtension === 'jpg' ? 'image/jpeg' : 'image/png';
+            const imageKey = `forum_images/${Date.now().toString()}_image.${fileExtension}`;
+    
             const params = {
                 Bucket: 'slightestscam',
                 Key: imageKey,
                 Body: imageBuffer,
                 ACL: 'public-read',
-                ContentType: 'image/jpeg'
+                ContentType: contentType
             };
             const s3Response = await s3.upload(params).promise();
-
             const new_post = new Forum({ title, desc, image: s3Response.Location, author: user.name, authorId: user._id });
             await new_post.save();
-
+    
             res.status(201).json({ message: "Post created successfully", post: new_post });
         } catch (error) {
             console.error(error);
             res.status(400).json({ message: "Error creating post" });
         }
     },
-
+    
     addComment: async(req, res) => {
         const postId = req.params.id;
         const { comment } = req.body;
