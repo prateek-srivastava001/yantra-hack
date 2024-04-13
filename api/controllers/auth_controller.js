@@ -32,7 +32,7 @@ const authController = {
 
   signup: async (req, res) => {
     try {
-      const { name, phoneNo, email, dob, password } = req.body;
+      const { name, phoneNo, email, dob, password, q1, q2, q3 } = req.body;
       const user_exists = await User.findOne({ $or: [{ phoneNo }, { email }] });
       if (user_exists) {
         return res.status(400).json({
@@ -41,7 +41,7 @@ const authController = {
         });
       }
       const hash = await bcrypt.hash(password, 10);
-      const new_user = new User({ name, phoneNo, email, dob, password: hash });
+      const new_user = new User({ name, phoneNo, email, dob, password: hash, q1, q2, q3});
       await new_user.save();
       res.status(201).json({ message: "Signup successful" });
     } catch (error) {
@@ -49,7 +49,7 @@ const authController = {
     }
   },
 
-  dashboard: async (req, res) => {
+  profile: async (req, res) => {
     try {
       const decoded = req.user;
       const user = await User.findOne({ email: decoded.email });
@@ -58,6 +58,30 @@ const authController = {
       }
       res.status(201).json(user);
     } catch (error) {
+      res.status(400).json({ error: "Error" });
+    }
+  },
+
+  editProfile: async(req, res) => {
+    try{
+      const { q1, q2, q3 } = req.body;
+      const decoded = req.user;
+      const user = await User.findOne({ email: decoded.email });
+      if(!user) {
+        return res.status(404).json({ message: "User not found" })
+      }
+      if(q1 !== undefined){
+        user.q1 = q1;
+      }
+      if(q2 !== undefined){
+        user.q2 = q2;
+      }
+      if(q3 !== undefined){
+        user.q3 = q3;
+      }
+      await user.save();
+      res.status(200).json({message:"user updated successfully"});
+    }catch (error){
       res.status(400).json({ error: "Error" });
     }
   }

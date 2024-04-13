@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.post("/login", authController.login);
 router.post("/signup", authController.signup);
-router.get("/dashboard", verifyAccessToken, authController.dashboard);
+router.patch("/profile", verifyAccessToken, authController.editProfile);
+router.get("/profile", verifyAccessToken, authController.profile);
 
 module.exports = router;
