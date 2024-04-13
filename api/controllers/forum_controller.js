@@ -3,8 +3,8 @@ const Forum = require("../models/Forum");
 const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({
-    accessKeyId: "AKIAXQH2USIP5EIVBPEM",
-    secretAccessKey: "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",
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
     region: "ap-south-1"
 });
   
