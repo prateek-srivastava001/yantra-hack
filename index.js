@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
+const bodyParser = require('body-parser');
 const os = require("os");
 const cors = require("cors");
 const authRoute = require("./api/routes/auth_router");
@@ -9,7 +10,7 @@ const forumRoute = require("./api/routes/forum_router");
 require("dotenv").config();
 
 const app = express();
-app.use(express.bodyParser({limit: '50mb'}));
+app.use(express.bodyParser({limit: '10mb'}));
 
 const mongoURI = process.env.DB_URI;
 
