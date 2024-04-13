@@ -18,17 +18,16 @@ const forumController = {
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
             }
-            const imageBuffer = Buffer.from(image, 'base64');
-    
             const fileExtension = image.startsWith('data:image/jpeg') ? 'jpg' : 'png';
-            const contentType = fileExtension === 'jpg' ? 'image/jpeg' : 'image/png';
             const base64Data = image.replace(/^data:image\/(png|jpeg);base64,/, '');
+            const imageBuffer = Buffer.from(base64Data, 'base64');
+            const contentType = fileExtension === 'jpg' ? 'image/jpeg' : 'image/png';
             const imageKey = `forum_images/${Date.now().toString()}_image.${fileExtension}`;
     
             const params = {
                 Bucket: 'slightestscam',
                 Key: imageKey,
-                Body: base64Data,
+                Body: imageBuffer,
                 ACL: 'public-read',
                 ContentType: contentType
             };
