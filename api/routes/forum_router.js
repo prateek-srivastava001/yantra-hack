@@ -9,5 +9,6 @@ router.delete("/forum/:id", verifyAccessToken, forumController.deletePost);
 router.put("/forum/:id", verifyAccessToken, forumController.addComment);
 router.delete("/forum/:postId/:commentId", verifyAccessToken, forumController.deleteComment);
 router.get("/forum/myposts", verifyAccessToken, forumController.getPostsByUser);
+router.get("/forum/:id",forumController.getPostById);
 
 module.exports = router;

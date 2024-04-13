@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const os = require("os");
 const cors = require("cors");
 const authRoute = require("./api/routes/auth_router");
+const transRoute = require("./api/routes/transcript_router");
 const forumRoute = require("./api/routes/forum_router");
 require("dotenv").config();
 
@@ -30,6 +31,7 @@ app.get("/ping", (_, res) => {
 
 app.use(authRoute);
 app.use(forumRoute);
+app.use(transRoute);
 
 app.listen(8080, () => {
   console.log("Server started at port: 8080");

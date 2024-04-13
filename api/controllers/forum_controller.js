@@ -102,6 +102,20 @@ const forumController = {
             res.status(400).json({ message: error.message || "Something went wrong" });
         }
     },
+
+    getPostById: async(req, res) => {
+        const postId = req.params.id;
+        try{
+            const Post = await Forum.find({ _id: postId });
+            if (!Post) {
+                return res.status(404).json({ message: "Post not found" });
+            }
+            res.status(200).json({ post: Post });
+        }catch(error){
+            res.status(400).json({ message: error.message || "Something went wrong" });
+        }
+    },
+
 };
 
 module.exports = forumController;
