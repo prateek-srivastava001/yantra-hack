@@ -7,7 +7,7 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.AWS_SECRET_KEY,
     region: "ap-south-1"
 });
-  
+
 const forumController = {
     createPost: async (req, res) => {
         const { title, desc, image } = req.body;
@@ -22,12 +22,13 @@ const forumController = {
     
             const fileExtension = image.startsWith('data:image/jpeg') ? 'jpg' : 'png';
             const contentType = fileExtension === 'jpg' ? 'image/jpeg' : 'image/png';
+            const base64Data = image.replace(/^data:image\/(png|jpeg);base64,/, '');
             const imageKey = `forum_images/${Date.now().toString()}_image.${fileExtension}`;
     
             const params = {
                 Bucket: 'slightestscam',
                 Key: imageKey,
-                Body: imageBuffer,
+                Body: base64Data,
                 ACL: 'public-read',
                 ContentType: contentType
             };
