@@ -9,6 +9,7 @@ const forumRoute = require("./api/routes/forum_router");
 require("dotenv").config();
 
 const app = express();
+app.use(express.bodyParser({limit: '50mb'}));
 
 const mongoURI = process.env.DB_URI;
 
