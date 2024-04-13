@@ -126,19 +126,18 @@ const forumController = {
         }
     },
 
-    getPostById: async(req, res) => {
+    getPostById: async (req, res) => {
         const postId = req.params.id;
-        try{
-            const Post = await Forum.find({ _id: postId });
-            if (!Post) {
+        try {
+            const post = await Forum.findOne({ _id: postId });
+            if (!post) {
                 return res.status(404).json({ message: "Post not found" });
             }
-            res.status(200).json({ Post });
-        }catch(error){
+            res.status(200).json({ post });
+        } catch (error) {
             res.status(400).json({ message: error.message || "Something went wrong" });
         }
-    },
-
+    },    
 };
 
 module.exports = forumController;
