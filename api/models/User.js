@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     q3: {
       type: String,
       required: true,
-    },        
+    },    
   },
 );
 const User = mongoose.model("User", userSchema);
